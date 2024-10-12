@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- AlpineJS CDN -->
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <link
+      rel="preconnect"
+      href="https://fonts.googleapis.com" />
+    <link
+      rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet" />
+
+    <title>Post-View</title>
+
+    <style>
+      * {
+        font-family: 'Inter', sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <header>
+      <!-- Navigation -->
+      <nav
+        x-data="{ mobileMenuOpen: false, userMenuOpen: false }"
+        class="bg-white shadow">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 justify-between">
+            <div class="flex">
+              <div class="flex flex-shrink-0 items-center">
+                <a href="{{ route('index') }}">
+                  <h2 class="font-bold text-2xl">Barta</h2>
+                </a>
+              </div>
+              <!--              <div class="hidden sm:ml-6 sm:flex sm:space-x-8">-->
+              <!--                &lt;!&ndash; Current: "border-gray-800 text-gray-900 font-semibold", Default: "border-transparent text-gray-600 hover:border-gray-300 hover:text-gray-800" &ndash;&gt;-->
+              <!--                <a-->
+              <!--                  href="#"-->
+              <!--                  class="inline-flex items-center border-b-2 border-gray-800 px-1 pt-1 text-sm font-semibold text-gray-900"-->
+              <!--                  >Discover</a-->
+              <!--                >-->
+              <!--                <a-->
+              <!--                  href="#"-->
+              <!--                  class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-800"-->
+              <!--                  >For you</a-->
+              <!--                >-->
+              <!--                <a-->
+              <!--                  href="#"-->
+              <!--                  class="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-600 hover:border-gray-300 hover:text-gray-800"-->
+              <!--                  >People</a-->
+              <!--                >-->
+              <!--              </div>-->
+            </div>
+            <!-- Search input -->
+            <form action="{{ route('posts.show', $post['id']) }}" method="POST" class="flex items-center">
+              @csrf
+              <input
+                      type="text"
+                      placeholder="Search..."
+                      name="search_text"
+                      class="border-2 border-gray-300 bg-white h-10 px-5 pr-10 rounded-full text-sm focus:outline-none"
+              />
+              <button
+                  type="submit"
+                  class="ml-2 flex gap-2 text-xs items-center rounded-full px-4 py-2 font-semibold bg-gray-800 hover:bg-black text-white">
+                Search
+              </button>
+            </form>
+            <div class="hidden sm:ml-6 sm:flex gap-2 sm:items-center">
+              <!-- This Button Should Be Hidden on Mobile Devices -->
+                            <button
+                              type="button"
+                              class="text-gray-900 hover:text-white border-2 border-gray-800 hover:bg-gray-900 focus:ring-2 focus:outline-none focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hidden md:block">
+                              Create Post
+                            </button>
+
+              <!--              <button-->
+              <!--                type="button"-->
+              <!--                class="rounded-full bg-white p-2 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">-->
+              <!--                <span class="sr-only">View notifications</span>-->
+              <!--                &lt;!&ndash; Heroicon name: outline/bell &ndash;&gt;-->
+              <!--                <svg-->
+              <!--                  class="h-6 w-6"-->
+              <!--                  xmlns="http://www.w3.org/2000/svg"-->
+              <!--                  fill="none"-->
+              <!--                  viewBox="0 0 24 24"-->
+              <!--                  stroke-width="1.5"-->
+              <!--                  stroke="currentColor"-->
+              <!--                  aria-hidden="true">-->
+              <!--                  <path-->
+              <!--                    stroke-linecap="round"-->
+              <!--                    stroke-linejoin="round"-->
+              <!--                    d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />-->
+              <!--                </svg>-->
+              <!--              </button>-->
+
+              <!--              <button-->
+              <!--                type="button"-->
+              <!--                class="rounded-full bg-white p-2 text-gray-800 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">-->
+              <!--                <span class="sr-only">Messages</span>-->
+              <!--                <svg-->
+              <!--                  xmlns="http://www.w3.org/2000/svg"-->
+              <!--                  fill="none"-->
+              <!--                  viewBox="0 0 24 24"-->
+              <!--                  stroke-width="1.5"-->
+              <!--                  stroke="currentColor"-->
+              <!--                  class="w-6 h-6">-->
+              <!--                  <path-->
+              <!--                    stroke-linecap="round"-->
+              <!--                    stroke-linejoin="round"-->
+              <!--                    d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />-->
+              <!--                </svg>-->
+              <!--              </button>-->
+
+              <!-- Profile dropdown -->
+              <div
+                class="relative ml-3"
+                x-data="{ open: false }">
+                <div>
+                  <button
+                    @click="open = !open"
+                    type="button"
+                    class="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    id="user-menu-button"
+                    aria-expanded="false"
+                    aria-haspopup="true">
+                    <span class="sr-only">Open user menu</span>
+                    @if (isset($userInfo->profile_image_path))
+                      <img
+                        class="h-8 w-8 rounded-full"
+                        src="{{ asset('uploads/' . $userInfo->profile_image_path) }}"
+                        alt="{{ $userInfo->fname . ' ' . $userInfo->lname }}" />
+                    @else
+                      <img
+                        class="h-8 w-8 rounded-full"
+                        src="https://avatars.githubusercontent.com/u/831997"
+                        alt="Ahmed Shamim Hasan Shaon" />
+                    @endif
+                  </button>
+                </div>
+
+                <!-- Dropdown menu -->
+                <div
+                  x-show="open"
+                  @click.away="open = false"
+                  class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="user-menu-button"
+                  tabindex="-1">
+                  <a
+                    href="{{ route('profile.show', $userInfo->id) }}"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-0"
+                    >Your Profile</a
+                  >
+                  <a
+                    href="{{ route('profile.edit') }}"
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    role="menuitem"
+                    tabindex="-1"
+                    id="user-menu-item-1"
+                    >Edit Profile</a
+                  >
+                  <form action="{{ route('logout') }}" method="POST" id="frm-logout">
+                    @csrf
+                    <a
+                      href="{{ route('logout') }}"
+                      onclick="event.preventDefault(); document.getElementById('frm-logout').submit();"
+                      class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                      >Sign out</a
+                    >
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div class="-mr-2 flex items-center sm:hidden">
+              <!-- Mobile menu button -->
+              <button
+                @click="mobileMenuOpen = !mobileMenuOpen"
+                type="button"
+                class="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gray-500"
+                aria-controls="mobile-menu"
+                aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <!-- Icon when menu is closed -->
+                <svg
+                  x-show="!mobileMenuOpen"
+                  class="block h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  aria-hidden="true">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+
+                <!-- Icon when menu is open -->
+                <svg
+                  x-show="mobileMenuOpen"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  class="w-6 h-6">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile menu, show/hide based on menu state. -->
+        <div
+          x-show="mobileMenuOpen"
+          class="sm:hidden"
+          id="mobile-menu">
+          <div class="border-t border-gray-200 pt-4 pb-3">
+            <div class="flex items-center px-4">
+              <div>
+                <div class="text-base font-medium text-gray-800">
+                  {{ $userInfo->fname . ' ' . $userInfo->lname }}
+                </div>
+                <div class="text-sm font-medium text-gray-500">
+                  {{ $userInfo->email }}
+                </div>
+              </div>
+            </div>
+            <div class="mt-3 space-y-1">
+              <a
+                href="{{ route('profile.show', $userInfo->id) }}"
+                class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                >Your Profile</a
+              >
+              <a
+                href="{{ route('profile.edit') }}"
+                class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                >Edit Profile</a
+              >
+              <form action="{{ route('logout') }}" method="POST" id="frm-logout">
+                @csrf
+                <a
+                  href="{{ route('logout') }}"
+                  onclick="event.preventDefault(); document.getElementById('frm-logout').submit();"
+                  class="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
+                  >Sign out</a
+                >
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main
+      class="container max-w-2xl mx-auto space-y-8 mt-8 px-2 md:px-0 min-h-screen">
+      <!-- Newsfeed -->
+      <section
+        id="newsfeed"
+        class="space-y-6">
+        <!-- Barta Card -->
+        <article
+          class="bg-white border-2 border-black rounded-lg shadow mx-auto max-w-none px-4 py-5 sm:px-6">
+          <!-- Barta Card Top -->
+          <header>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <!-- User Avatar -->
+                <div class="flex-shrink-0">
+                  @if (isset($post['user']['profile_image_path']))
+                    <img
+                      class="h-10 w-10 rounded-full object-cover"
+                      src="{{ asset('uploads/' . $post['user']['profile_image_path']) }}"
+                      alt="{{ $post['user']['fname'] . ' ' . $post['user']['lname'] }}" />
+                  @else
+                    <img
+                      class="h-10 w-10 rounded-full object-cover"
+                      src="https://avatars.githubusercontent.com/u/831997"
+                      alt="Tony Stark" />
+                  @endif
+                </div>
+                <!-- /User Avatar -->
+
+                <!-- User Info -->
+                <div class="text-gray-900 flex flex-col min-w-0 flex-1">
+                  <a
+                          href="{{ route('profile.show', $post['user']['id']) }}"
+                          class="hover:underline font-semibold line-clamp-1">
+                    {{ $post['user']['fname'] . ' ' . $post['user']['lname'] }}
+                  </a>
+
+                  <a
+                          href="{{ route('profile.show', $post['user']['id']) }}"
+                          class="hover:underline text-sm text-gray-500 line-clamp-1">
+                    {{ $post['user']['email'] }}
+                  </a>
+                </div>
+                <!-- /User Info -->
+              </div>
+
+              <!-- Card Action Dropdown -> Only visible to post owner -->
+              @auth
+                @if ($post['user_id'] === $userInfo->id)
+                  <div
+                    class="flex flex-shrink-0 self-center" x-data="{ open: false }">
+                    <div class="relative inline-block text-left">
+                      <div>
+                        <button
+                                @click="open = !open"
+                                type="button"
+                                class="-m-2 flex items-center rounded-full p-2 text-gray-400 hover:text-gray-600"
+                                id="menu-0-button">
+                          <span class="sr-only">Open options</span>
+                          <svg
+                                  class="h-5 w-5"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true">
+                            <path
+                                    d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"></path>
+                          </svg>
+                        </button>
+                      </div>
+                      <!-- Dropdown menu -->
+                      <div
+                              x-show="open"
+                              @click.away="open = false"
+                              class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                              role="menu"
+                              aria-orientation="vertical"
+                              aria-labelledby="user-menu-button"
+                              tabindex="-1">
+                        <a
+                                href="{{ route('posts.edit', $post['id']) }}"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                role="menuitem"
+                                tabindex="-1"
+                                id="user-menu-item-0"
+                        >Edit</a
+                        >
+                        <form action="{{ route('posts.destroy', $post['id']) }}" method="POST" onclick="return confirm('Are you sure?')">
+                          @csrf
+                          @method('DELETE')
+                          <button
+                                  type="submit"
+                                  class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                                  role="menuitem"
+                                  tabindex="-1"
+                                  id="user-menu-item-1"
+                              >Delete
+                            </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                @endif
+              @endauth
+              <!-- /Card Action Dropdown -> Only visible to post owner -->
+            </div>
+          </header>
+
+          <!-- Content -->
+          <div class="py-4 text-gray-700 font-normal">
+            <p>
+              {{ $post['content'] }}
+
+              <!-- Post Image If exists -->
+              @if (isset($post['filePath']))
+                <div
+                  class="flex gap-4 justify-center flex-col text-center items-center">
+                  <div class="relative">
+                      <img
+                        class="w-32 h-32 border-2 border-gray-800"
+                        src="{{ asset('uploads/' . $post['filePath']) }}"
+                        alt="{{ $userInfo->fname . ' ' . $userInfo->lname }}" />
+                    
+                    <!-- <span class="bottom-2 right-4 absolute w-3.5 h-3.5 bg-green-400 border-2 border-white dark:border-gray-800 rounded-full"></span>-->
+                  </div>
+                </div>
+              @endif
+              <!-- /Post Image If exists -->
+            </p>
+          </div>
+
+          <!-- Date Created & View Stat -->
+          <div class="flex items-center gap-2 text-gray-500 text-xs my-2">
+            <span class="">{{ \Carbon\Carbon::parse($post['created_at'])->diffForHumans() }}</span>
+            <span class="">•</span>
+            <span>0 comments</span>
+            <span class="">•</span>
+            <span>0 views</span>
+          </div>
+
+          <hr class="my-6" />
+
+          <!-- Barta Create Comment Form -->
+          <form
+            action=""
+            method="POST">
+            <!-- Create Comment Card Top -->
+            <div>
+              <div class="flex items-start space-x-3">
+                <!-- User Avatar -->
+                 <div class="flex-shrink-0">
+                    @if (isset($userInfo->profile_image_path))
+                      <img
+                        class="h-10 w-10 rounded-full object-cover"
+                        src="{{ asset('uploads/' . $userInfo->profile_image_path) }}"
+                        alt="{{ $userInfo->fname . ' ' . $userInfo->lname }}" />
+                    @else
+                      <img
+                        class="h-10 w-10 rounded-full object-cover"
+                        src="https://avatars.githubusercontent.com/u/831997"
+                        alt="Ahmed Shamim" />
+                    @endif
+                  </div>
+                <!-- /User Avatar -->
+
+                <!-- Auto Resizing Comment Box -->
+                <div class="text-gray-700 font-normal w-full">
+                  <textarea
+                    x-data="{
+                          resize () {
+                              $el.style.height = '0px';
+                              $el.style.height = $el.scrollHeight + 'px'
+                          }
+                      }"
+                    x-init="resize()"
+                    @input="resize()"
+                    type="text"
+                    name="comment"
+                    placeholder="Write a comment..."
+                    class="flex w-full h-auto min-h-[40px] px-3 py-2 text-sm bg-gray-100 focus:bg-white border border-sm rounded-lg border-neutral-300 ring-offset-background placeholder:text-neutral-400 focus:border-neutral-300 focus:outline-none focus:ring-1 focus:ring-offset-0 focus:ring-neutral-400 disabled:cursor-not-allowed disabled:opacity-50 text-gray-900"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Create Comment Card Bottom -->
+            <div>
+              <!-- Card Bottom Action Buttons -->
+              <div class="flex items-center justify-end">
+                <button
+                  type="submit"
+                  class="mt-2 flex gap-2 text-xs items-center rounded-full px-4 py-2 font-semibold bg-gray-800 hover:bg-black text-white">
+                  Comment
+                </button>
+              </div>
+              <!-- /Card Bottom Action Buttons -->
+            </div>
+            <!-- /Create Comment Card Bottom -->
+          </form>
+          <!-- /Barta Create Comment Form -->
+
+          <!-- /Barta Card Bottom -->
+        </article>
+        <!-- /Barta Card -->
+
+        @if (isset($searchedUsers) && count($searchedUsers) !== 0)
+          <!-- If data found from the search -->
+          @foreach($searchedUsers as $user)
+            <article
+              class="bg-white border-2 border-black rounded-lg shadow mx-auto max-w-none px-4 py-5 sm:px-6">
+              <!-- Barta Card Top -->
+                <header>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                      <!-- User Avatar -->
+                        <div class="flex-shrink-0">
+                          <img
+                            class="h-10 w-10 rounded-full object-cover"
+                            src="https://avatars.githubusercontent.com/u/61485238"
+                            alt="Al Nahian" />
+                        </div>
+                      <!-- /User Avatar -->
+
+                      <!-- User Info -->
+                      <div class="text-gray-900 flex flex-col min-w-0 flex-1">
+                        <a
+                          href="{{ route('profile.show', $user['id']) }}"
+                          class="hover:underline font-semibold line-clamp-1">
+                          {{ $user['fname'] . ' ' . $user['lname'] }}
+                        </a>
+
+                        <a
+                          href="{{ route('profile.show', $user['id']) }}"
+                          class="hover:underline text-sm text-gray-500 line-clamp-1">
+                          {{ $user['email'] }}
+                        </a>
+                      </div>
+                      <!-- /User Info -->
+                    </div>
+
+                  </div>
+                </header>            
+            </article>
+          @endforeach
+        @elseif (isset($searchedUsers) && count($searchedUsers) === 0)
+          <!-- If no data found in the search-->
+          <h1 class="text-lg font-semibold text-red-500">No Data Found!</h1>
+        @endif
+
+        <hr />
+        <div class="flex flex-col space-y-6">
+          <h1 class="text-lg font-semibold">Comments (3)</h1>
+
+          <!-- Barta User Comments Container -->
+          <article
+            class="bg-white border-2 border-black rounded-lg shadow mx-auto max-w-none px-4 py-2 sm:px-6 min-w-full divide-y">
+            <!-- Comments -->
+
+            <!-- Comment 1 -->
+            <div class="py-4">
+              <!-- Barta User Comments Top -->
+              <header>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <!-- User Avatar -->
+                    <div class="flex-shrink-0">
+                      <img
+                              class="h-10 w-10 rounded-full object-cover"
+                              src="https://avatars.githubusercontent.com/u/61485238"
+                              alt="Al Nahian" />
+                    </div>
+                    <!-- /User Avatar -->
+                    <!-- User Info -->
+                    <div class="text-gray-900 flex flex-col min-w-0 flex-1">
+                      <a
+                        href="profile.html"
+                        class="hover:underline font-semibold line-clamp-1">
+                        Al Nahian
+                      </a>
+
+                      <a
+                        href="profile.html"
+                        class="hover:underline text-sm text-gray-500 line-clamp-1">
+                        @alnahian2003
+                      </a>
+                    </div>
+                    <!-- /User Info -->
+                  </div>
+                </div>
+              </header>
+
+              <!-- Content -->
+              <div class="py-4 text-gray-700 font-normal">
+                <p>আজকে থেকে আমিও একজন PoorPHP ডেভেলপার 😂</p>
+              </div>
+
+              <!-- Date Created -->
+              <div class="flex items-center gap-2 text-gray-500 text-xs">
+                <span class="">6m ago</span>
+              </div>
+            </div>
+            <!-- /Comment 1 -->
+
+            <!-- Comment 2 -->
+            <div class="py-4">
+              <!-- Barta User Comments Top -->
+              <header>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <!-- User Avatar -->
+                    <div class="flex-shrink-0">
+                      <img
+                              class="h-10 w-10 rounded-full object-cover"
+                              src="https://avatars.githubusercontent.com/u/831997"
+                              alt="Ahmed Shamim" />
+                    </div>
+                    <!-- /User Avatar -->
+                    <!-- User Info -->
+                    <div class="text-gray-900 flex flex-col min-w-0 flex-1">
+                      <a
+                        href="profile.html"
+                        class="hover:underline font-semibold line-clamp-1">
+                        Bruce Wayne
+                      </a>
+
+                      <a
+                        href="profile.html"
+                        class="hover:underline text-sm text-gray-500 line-clamp-1">
+                        @wayne
+                      </a>
+                    </div>
+                    <!-- /User Info -->
+                  </div>
+                </div>
+              </header>
+
+              <!-- Content -->
+              <div class="py-4 text-gray-700 font-normal">
+                <p>এখন থেকে শুধু টাকা কথা বলবে, টাকা 🤑</p>
+              </div>
+
+              <!-- Date Created -->
+              <div class="flex items-center gap-2 text-gray-500 text-xs">
+                <span class="">6m ago</span>
+              </div>
+            </div>
+            <!-- /Comment 2 -->
+
+            <!-- Comment 3 -->
+            <div class="py-4">
+              <!-- Barta User Comments Top -->
+              <header>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <!-- User Avatar -->
+                    <div class="flex-shrink-0">
+                      <img
+                              class="h-10 w-10 rounded-full object-cover"
+                              src="https://avatars.githubusercontent.com/u/831997"
+                              alt="Ahmed Shamim" />
+                    </div>
+                    <!-- /User Avatar -->
+                    <!-- User Info -->
+                    <div class="text-gray-900 flex flex-col min-w-0 flex-1">
+                      <a
+                        href="profile.html"
+                        class="hover:underline font-semibold line-clamp-1">
+                        Ahmed Shamim Hasan Shaon
+                      </a>
+
+                      <a
+                        href="profile.html"
+                        class="hover:underline text-sm text-gray-500 line-clamp-1">
+                        @me_shaon
+                      </a>
+                    </div>
+                    <!-- /User Info -->
+                  </div>
+
+                  <!-- Card Action Dropdown -->
+                  <div
+                    class="flex flex-shrink-0 self-center"
+                    x-data="{ open: false }">
+                    <div class="relative inline-block text-left">
+                      <div>
+                        <button
+                          @click="open = !open"
+                          type="button"
+                          class="-m-2 flex items-center rounded-full p-2 text-gray-400 hover:text-gray-600"
+                          id="menu-0-button">
+                          <span class="sr-only">Open options</span>
+                          <svg
+                            class="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true">
+                            <path
+                              d="M10 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM10 8.5a1.5 1.5 0 110 3 1.5 1.5 0 010-3zM11.5 15.5a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"></path>
+                          </svg>
+                        </button>
+                      </div>
+                      <!-- Dropdown menu -->
+                      <div
+                        x-show="open"
+                        @click.away="open = false"
+                        class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        role="menu"
+                        aria-orientation="vertical"
+                        aria-labelledby="user-menu-button"
+                        tabindex="-1">
+                        <a
+                          href="#"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          role="menuitem"
+                          tabindex="-1"
+                          id="user-menu-item-0"
+                          >Edit</a
+                        >
+                        <a
+                          href="#"
+                          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                          role="menuitem"
+                          tabindex="-1"
+                          id="user-menu-item-1"
+                          >Delete</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                  <!-- /Card Action Dropdown -->
+                </div>
+              </header>
+
+              <!-- Content -->
+              <div class="py-4 text-gray-700 font-normal">
+                <p>PoorPHP vs Regular PHP 😎 Let the battle begin 💪</p>
+              </div>
+
+              <!-- Date Created -->
+              <div class="flex items-center gap-2 text-gray-500 text-xs">
+                <span class="">6m ago</span>
+              </div>
+            </div>
+            <!-- /Comment 3 -->
+
+            <!-- /Comments -->
+          </article>
+          <!-- /Barta User Comments -->
+        </div>
+      </section>
+      <!-- /Newsfeed -->
+    </main>
+
+    <footer class="shadow bg-black mt-10">
+      <div class="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <div class="sm:flex sm:items-center sm:justify-between">
+          <a
+            href="https://github.com/alnahian2003"
+            class="flex items-center mb-4 sm:mb-0">
+            <span
+              class="self-center text-2xl font-semibold whitespace-nowrap text-white"
+              >Barta</span
+            >
+          </a>
+          <ul
+            class="flex flex-wrap items-center mb-6 text-sm font-medium sm:mb-0 text-gray-100">
+            <li>
+              <a
+                href="#"
+                class="mr-4 hover:underline md:mr-6"
+                >About</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="mr-4 hover:underline md:mr-6"
+                >Privacy Policy</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="mr-4 hover:underline md:mr-6"
+                >Licensing</a
+              >
+            </li>
+            <li>
+              <a
+                href="#"
+                class="hover:underline"
+                >Contact</a
+              >
+            </li>
+          </ul>
+        </div>
+        <hr class="my-6 sm:mx-auto border-gray-700 lg:my-8" />
+        <span class="block text-sm sm:text-center text-gray-200"
+          >©  <span x-data x-text="new Date().getFullYear()"></span>
+          <a
+            href="https://github.com/alnahian2003"
+            class="hover:underline"
+            >Barta</a
+          >. All Rights Reserved.</span
+        >
+      </div>
+    </footer>
+  </body>
+</html>
